@@ -1,0 +1,114 @@
+public class Main {
+    public static void main(String[] args) {
+        
+        Repository<Employee> empRepo = new Repository<>();
+        Repository<Product> prodRepo = new Repository<>();
+
+        // Add Data
+        empRepo.add(new Employee(1, "Alice", 85000.0));
+        empRepo.add(new Employee(2, "Bob", 76000.0));
+
+        prodRepo.add(new Product(101, "Laptop", 1500.0));
+        prodRepo.add(new Product(102, "Mouse", 25.0));
+
+        // Display Data
+        System.out.println("--- Employee Repository ---");
+        empRepo.displayAll();
+
+        System.out.println("\n--- Product Repository ---");
+        prodRepo.displayAll();
+
+        // Find by Index
+        System.out.println("\n--- Find by Index ---");
+        System.out.println("Employee at index 0: " + empRepo.findByIndex(0));
+        System.out.println("Product at index 1: " + prodRepo.findByIndex(1));
+
+        // Removal
+        System.out.println("\nRemoving an item...");
+        prodRepo.remove(prodRepo.findByIndex(1)); // Removing the Mouse
+        System.out.println("--- Product Repository After Removal ---");
+        prodRepo.displayAll();
+
+        // Perform Generic Action
+        System.out.println("\n--- Perform Generic Action ---");
+        empRepo.performAction(empRepo.findByIndex(0));
+        prodRepo.performAction(prodRepo.findByIndex(0));
+    }
+}
+class Employee {
+    int id;
+    String name;
+    double salary;
+
+    public Employee(int id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{id=" + id + ", name='" + name + "', salary=" + salary + "}";
+    }
+}
+
+// Product.java
+class Product {
+    int id;
+    String name;
+    double price;
+
+    public Product(int id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{id=" + id + ", name='" + name + "', price=" + price + "}";
+    }
+}
+import java.util.ArrayList;
+import java.util.List;
+
+class Repository<T> {
+    private List<T> items = new ArrayList<>();
+
+    public void add(T item) {
+        items.add(item);
+    }
+
+    public void remove(T item) {
+        items.remove(item);
+    }
+
+    public List<T> getAll() {
+        return new ArrayList<>(items); // Return a copy for safety
+    }
+
+    public T findByIndex(int index) {
+        if (index < 0 || index >= items.size()) {
+            throw new IndexOutOfBoundsException("Item at index " + index + " does not exist.");
+        }
+        return items.get(index);
+    }
+
+    public void displayAll() {
+        for (T item : items) {
+            System.out.println(item.toString());
+        }
+    }
+
+    public <U> void performAction(U input) {
+        if (input instanceof Employee) {
+            Employee emp = (Employee) input;
+            System.out.println("Processing Employee: " + emp.name + " with salary " + emp.salary);
+        } else if (input instanceof Product) {
+            Product prod = (Product) input;
+            System.out.println("Processing Product: " + prod.name);
+        } else {
+            System.out.println("Processing unknown type...");
+        }
+    }
+}
